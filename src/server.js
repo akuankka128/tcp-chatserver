@@ -2,25 +2,26 @@ let nop = ( ) => {};
 let connections = [];
 
 const out = process.stdout;
+const colors = require('colors/safe');
 const server = require('net').createServer(async function(conn) {
 	conn.on('end', nop);
 	conn.on('error', nop);
 
 	connections.push(conn);
 
-	conn.write('Server|Welcome, client.\r\n');
+	conn.write(`${colors.red("root")}|[Server]|Welcome, client.\r\n`);
 	conn.on('data', chunk => {
 		let things = chunk.toString().split("|");
 		let username = things[0].toLowerCase();
-		let message = `${username}|${things.slice(1).join("|")}`;
+		let message = `${colors.yellow("User")}|${username}|${things.slice(1).join("|")}`;
 
 		if(username === "server" || username === "local") {
-			conn.write('Server|Illegal username.\r\n');
+			conn.write(`${colors.red("root")}|[Server]|Illegal username.\r\n`);
 			return conn.end();
 		}
 
 		if(!username || !message) {
-			conn.write("Server|Illegal formatting. (username|message)");
+			conn.write(`${colors.red("root")}|[Server]|Illegal formatting. (username|message)\r\n`);
 			return conn.end();
 		}
 
