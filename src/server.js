@@ -7,12 +7,12 @@ const server = require('net').createServer(async function(conn) {
 	conn.on('error', nop);
 
 	connections.push(conn);
-	console.log(conn);
 
 	conn.write('Server|Welcome, client.\r\n');
 	conn.on('data', chunk => {
-		let [username, ...message] = chunk.toString().split("|");
-		username = username.toLowerCase();
+		let things = chunk.toString().split("|");
+		let username = things[0].toLowerCase();
+		let message = `${username}|${things.slice(1).join("|")}`;
 
 		if(username === "server" || username === "local") {
 			conn.write('Server|Illegal username.\r\n');
@@ -24,7 +24,7 @@ const server = require('net').createServer(async function(conn) {
 			return conn.end();
 		}
 
-		connections.forEach(conn => conn.write(message.join("|")));
+		connections.forEach(conn => conn.write(message));
 	});
 });
 
